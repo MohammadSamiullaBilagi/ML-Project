@@ -15,7 +15,7 @@ def get_requirements(file_path: str) -> List[str]:
         # Strip newline and whitespace characters from each requirement
         requirements = [req.strip() for req in requirements]
 
-        # Remove editable installs if present
+        # Remove editable installs if present that is -e . in requirements.txt
         if HYPHEN_E_DOT in requirements:
             requirements.remove(HYPHEN_E_DOT)
     
@@ -27,7 +27,7 @@ setup(
     version="0.0.1",
     author="sami",
     author_email="mdsamiulla2002@gmail.com",
-    packages=find_packages(),
-    install_requires=get_requirements('Requirements.txt'),
+    packages=find_packages(),  #this find packages will find how many folders have __init__.py so it cosiders that folder as package and builds it, ex: src
+    install_requires=get_requirements('Requirements.txt'), #function reads the file and install dependencies
 
 )
