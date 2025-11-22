@@ -1,111 +1,288 @@
-<html>
-<body>
-    <div class="login">
-       <h1>Student Exam Performance Indicator</h1>
-   
-       <form action="{{ url_for('predict_datapoint')}}" method="post">
-        <h1>
-            <legend>Student Exam Performance Prediction</legend>
-        </h1>
-        <div class="mb-3">
-            <label class="form-label">Gender</label>
-            <select class="form-control" name="gender" placeholder="Enter you Gender" required>
-                <option class="placeholder" selected disabled value="">Select your Gender</option>
-                <option value="male">
-                    Male
-                </option>
-                <option value="female">
-                    Female
-                </option>
-            </select>
+
+
+{% extends "base.html" %}
+
+{% block title %}Predict | Student Performance Predictor{% endblock %}
+
+{% block content %}
+<section class="form-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="glass-card shadow-lg p-4 p-md-5">
+                    <h2 class="h3 fw-bold text-light mb-1">Student Performance Prediction</h2>
+                    <p class="text-light-60 small mb-4">
+                        Fill in the details below and submit to get the predicted performance from the model.
+                        Reading & writing scores will be validated in real-time.
+                    </p>
+
+                    <form action="{{ url_for('predict_datapoint') }}" method="POST" class="row g-3" id="scoreForm">
+                        <!-- Gender -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="gender">Gender</label>
+                            <select class="form-select form-control-glass" id="gender" name="gender" required>
+                                <option value="" disabled selected>Select gender</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Ethnicity -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="ethnicity">Race/Ethnicity</label>
+                            <select class="form-select form-control-glass" id="ethnicity" name="ethnicity" required>
+                                <option value="" disabled selected>Select group</option>
+                                <option value="group A">Group A</option>
+                                <option value="group B">Group B</option>
+                                <option value="group C">Group C</option>
+                                <option value="group D">Group D</option>
+                                <option value="group E">Group E</option>
+                            </select>
+                        </div>
+
+                        <!-- Parental Level of Education -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="parental_level_of_education">
+                                Parental Level of Education
+                            </label>
+                            <select class="form-select form-control-glass" id="parental_level_of_education" name="parental_level_of_education" required>
+                                <option value="" disabled selected>Select level</option>
+                                <option value="some high school">Some high school</option>
+                                <option value="high school">High school</option>
+                                <option value="associate's degree">Associate's degree</option>
+                                <option value="bachelor's degree">Bachelor's degree</option>
+                                <option value="master's degree">Master's degree</option>
+                            </select>
+                        </div>
+
+                        <!-- Lunch -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="lunch">Lunch Type</label>
+                            <select class="form-select form-control-glass" id="lunch" name="lunch" required>
+                                <option value="" disabled selected>Select lunch type</option>
+                                <option value="standard">Standard</option>
+                                <option value="free/reduced">Free/Reduced</option>
+                            </select>
+                        </div>
+
+                        <!-- Test Preparation Course -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="test_preparation_course">Test Preparation Course</label>
+                            <select class="form-select form-control-glass" id="test_preparation_course" name="test_preparation_course" required>
+                                <option value="" disabled selected>Select status</option>
+                                <option value="none">None</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- Reading Score -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="reading_score">Reading Score</label>
+                            <input
+                                type="number"
+                                class="form-control form-control-glass"
+                                id="reading_score"
+                                name="reading_score"
+                                min="0"
+                                max="100"
+                                step="1"
+                                placeholder="e.g., 72"
+                                required
+                            >
+                            <!-- Progress for Reading -->
+                            <div class="mt-2">
+                                <div class="progress score-progress" id="readingProgress">
+                                    <div class="progress-bar" role="progressbar"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small text-light-60 mt-1">
+                                    <span class="small">0</span>
+                                    <span class="small" id="readingScoreText">Score: —</span>
+                                    <span class="small">100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Writing Score -->
+                        <div class="col-md-6">
+                            <label class="form-label text-light-80" for="writing_score">Writing Score</label>
+                            <input
+                                type="number"
+                                class="form-control form-control-glass"
+                                id="writing_score"
+                                name="writing_score"
+                                min="0"
+                                max="100"
+                                step="1"
+                                placeholder="e.g., 70"
+                                required
+                            >
+                            <!-- Progress for Writing -->
+                            <div class="mt-2">
+                                <div class="progress score-progress" id="writingProgress">
+                                    <div class="progress-bar" role="progressbar"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small text-light-60 mt-1">
+                                    <span class="small">0</span>
+                                    <span class="small" id="writingScoreText">Score: —</span>
+                                    <span class="small">100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Performance Label -->
+                        <div class="col-12 mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-light-70 mb-1 small fw-semibold">Live Performance Estimate (based on average of reading & writing)</p>
+                                    <p class="text-light-60 mb-0 small" id="avgScoreText">
+                                        Average Score: —
+                                    </p>
+                                </div>
+                                <span id="performanceBadge" class="performance-badge badge-medium" style="display:none;">
+                                    <span>Performance:</span>
+                                    <span id="performanceLabel">—</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-between align-items-center mt-4">
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-light">
+                                ⬅ Back
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 main-cta">
+                                Predict Performance
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if results is not none %}
+                        <hr class="mt-4 mb-3">
+                        <div class="result-card mt-2 p-3">
+                            <h5 class="mb-1 text-light-80">Model Prediction Result</h5>
+                            <p class="display-6 mb-1 gradient-text">
+                                {{ results }}
+                            </p>
+                            <p class="small text-light-60 mb-0">
+                                This output is generated by the machine learning model from the submitted parameters.
+                                The live estimate above provides an intuitive reference for understanding the result.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Race or Ethnicity</label>
-            <select class="form-control" name="ethnicity" placeholder="Enter you ethnicity" required>
-                <option class="placeholder" selected disabled value="">Select Ethnicity</option>
-                <option value="group A">
-                    Group A
-                </option>
-                <option value="group B">
-                    Group B
-                </option>
-                <option value="group C">
-                    Group C
-                </option>
-                <option value="group D">
-                    Group D
-                </option>
-                <option value="group E">
-                    Group E
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Parental Level of Education</label>
-            <select class="form-control" name="parental_level_of_education"
-                placeholder="Enter you Parent Education" required>
-                <option class="placeholder" selected disabled value="">Select Parent Education</option>
-                <option value="associate's degree">
-                    associate's degree
-                </option>
-                <option value="bachelor's degree">
-                    bachelor's degree
-                </option>
-                <option value="high school">
-                    high school
-                </option>
-                <option value="master's degree">
-                    master's degree
-                </option>
-                <option value="some college">
-                    some college
-                </option>
-                <option value="some high school">
-                    some high school
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Lunch Type</label>
-            <select class="form-control" name="lunch" placeholder="Enter you Lunch" required>
-                <option class="placeholder" selected disabled value="">Select Lunch Type</option>
-                <option value="free/reduced">
-                    free/reduced
-                </option>
-                <option value="standard">
-                    standard
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Test preparation Course</label>
-            <select class="form-control" name="test_preparation_course" placeholder="Enter you Course"
-                required>
-                <option class="placeholder" selected disabled value="">Select Test_course</option>
-                <option value="none">
-                    None
-                </option>
-                <option value="completed">
-                    Completed
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Writing Score out of 100</label>
-            <input class="form-control" type="number" name="reading_score"
-                placeholder="Enter your Reading score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Reading Score out of 100</label>
-            <input class="form-control" type="number" name="writing_score"
-                placeholder="Enter your Reading Score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" required />
-        </div>
-    </form>
-    <h2>
-       THE  prediction is {{results}}
-    </h2>
-   <body>
-</html>
+    </div>
+</section>
+
+<!-- Real-time score logic -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const readingInput = document.getElementById('reading_score');
+    const writingInput = document.getElementById('writing_score');
+
+    const readingBar = document.querySelector('#readingProgress .progress-bar');
+    const writingBar = document.querySelector('#writingProgress .progress-bar');
+
+    const readingScoreText = document.getElementById('readingScoreText');
+    const writingScoreText = document.getElementById('writingScoreText');
+
+    const avgScoreText = document.getElementById('avgScoreText');
+    const performanceBadge = document.getElementById('performanceBadge');
+    const performanceLabel = document.getElementById('performanceLabel');
+
+    function isValidScore(value) {
+        if (value === '' || value === null || value === undefined) return false;
+        const num = parseFloat(value);
+        return !isNaN(num) && num >= 0 && num <= 100;
+    }
+
+    function updateInputState(inputEl) {
+        const value = inputEl.value;
+        inputEl.classList.remove('input-valid', 'input-invalid');
+
+        if (!value) {
+            // Empty: no highlight
+            return;
+        }
+
+        if (isValidScore(value)) {
+            inputEl.classList.add('input-valid');
+        } else {
+            inputEl.classList.add('input-invalid');
+        }
+    }
+
+    function updateBar(barEl, scoreTextEl, value) {
+        barEl.classList.remove('progress-low', 'progress-medium', 'progress-high');
+
+        if (!isValidScore(value)) {
+            barEl.style.width = '0%';
+            scoreTextEl.textContent = 'Score: —';
+            return;
+        }
+
+        const num = parseFloat(value);
+        barEl.style.width = num + '%';
+        scoreTextEl.textContent = 'Score: ' + num.toFixed(0);
+
+        // Color by level
+        if (num < 40) {
+            barEl.classList.add('progress-low');
+        } else if (num < 70) {
+            barEl.classList.add('progress-medium');
+        } else {
+            barEl.classList.add('progress-high');
+        }
+    }
+
+    function updatePerformance() {
+        const rVal = readingInput.value;
+        const wVal = writingInput.value;
+
+        const rValid = isValidScore(rVal);
+        const wValid = isValidScore(wVal);
+
+        updateBar(readingBar, readingScoreText, rVal);
+        updateBar(writingBar, writingScoreText, wVal);
+
+        if (!rValid || !wValid) {
+            avgScoreText.textContent = 'Average Score: —';
+            performanceBadge.style.display = 'none';
+            performanceLabel.textContent = '—';
+            performanceBadge.classList.remove('badge-low', 'badge-medium', 'badge-high');
+            return;
+        }
+
+        const rNum = parseFloat(rVal);
+        const wNum = parseFloat(wVal);
+        const avg = (rNum + wNum) / 2.0;
+
+        avgScoreText.textContent = 'Average Score: ' + avg.toFixed(1);
+
+        performanceBadge.style.display = 'inline-flex';
+        performanceBadge.classList.remove('badge-low', 'badge-medium', 'badge-high');
+
+        if (avg < 40) {
+            performanceLabel.textContent = 'Low';
+            performanceBadge.classList.add('badge-low');
+        } else if (avg < 70) {
+            performanceLabel.textContent = 'Medium';
+            performanceBadge.classList.add('badge-medium');
+        } else {
+            performanceLabel.textContent = 'High';
+            performanceBadge.classList.add('badge-high');
+        }
+    }
+
+    function handleInput() {
+        updateInputState(this);
+        updatePerformance();
+    }
+
+    readingInput.addEventListener('input', handleInput);
+    writingInput.addEventListener('input', handleInput);
+});
+</script>
+{% endblock %}
+
