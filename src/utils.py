@@ -10,6 +10,8 @@ from sklearn.model_selection import GridSearchCV
 
 from src.exception import CustomException
 
+# THis containes all methods which are commonly used in the project
+
 def save_object(file_path, obj):
     try:
         dir_path = os.path.dirname(file_path)
@@ -22,6 +24,7 @@ def save_object(file_path, obj):
     except Exception as e:
         raise CustomException(e, sys)
     
+# This returns report dictionary with model score
 def evaluate_models(X_train, y_train,X_test,y_test,models,param):
     try:
         report = {}

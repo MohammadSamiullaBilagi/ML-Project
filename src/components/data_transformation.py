@@ -13,14 +13,29 @@ from src.utils import save_object
 from src.logger import logging
 import os
 
+'''
+this will create the preprocessor.pkl file which has handled categorical data, missing values
+standardized data
+'''
 @dataclass
 class DataTransformationConfig:
     preprocessor_obj_file_path=os.path.join('artifacts',"preprocessor.pkl")
 
+'''
+It has two methods get_data_transformer_obj() and initiate_data_transformation()
+'''
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config=DataTransformationConfig()
     
+    '''
+    In this get_data_transformer_obj() method:
+        Numerical and Categorical Pipelines are created
+        Then apply ColumnTransformer to both pipelines
+        This will ensure data doesn't has missing values, standardized, categorical data is encoded using OneHotEncoder, SimpleImputer will fill missing values
+        This returns preprocessor object
+    '''
+
     def get_data_transformer_obj(self):
         try:
             numerical_columns=["writing_score","reading_score"]  # Fixed typo
@@ -61,7 +76,13 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e,sys)
 
-    
+    '''
+    The initiate_data_transformation()
+    reads the train and test csv and convert to a dataframe
+    we will apply the preprocessing object returned by previous method
+    then apply fit_transform for Train Data and transform for test data, this is done to avoid Data Leakage
+    The method will return train and test array
+    '''
     def initiate_data_transformation(self,train_path,test_path):
         try:
             train_df=pd.read_csv(train_path)
@@ -94,6 +115,7 @@ class DataTransformation:
                             ]
             logging.info("saved preprocessing object")
 
+            # defined in utils file where all common methods are defined
             save_object(
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
                 obj=preprocessing_obj

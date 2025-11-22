@@ -10,13 +10,19 @@ from src.components.data_transformation import DataTransformation
 from src.components.model_trainer import ModelTrainerConfig
 from src.components.model_trainer import ModelTrainer
 
-
+'''
+In DataIngestionConfig(), the path of train, test, raw file path in the artifacts folder is created
+'''
 @dataclass
 class DataIngestionConfig:
     train_data_path: str=os.path.join('artifacts','train.csv')
     test_data_path: str=os.path.join('artifacts','test.csv')
     raw_data_path: str=os.path.join('artifacts','data.csv')
 
+'''
+The DataIngestion() method will return the train, test path 
+
+'''
 class DataIngestion:
     def __init__(self):
         self.ingestion_config=DataIngestionConfig()
@@ -48,10 +54,15 @@ class DataIngestion:
 
 if __name__=="__main__":
     obj=DataIngestion()
-    train_data,test_data= obj.intiate_data_ingestion()
-    data_transformation=DataTransformation()
+    train_data,test_data= obj.intiate_data_ingestion() # This will return train, test path
+    data_transformation=DataTransformation() # Here DataTransformation method will be called
     train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
-
+    '''
+    here we will transform the data and get train and test array
+    '''
     modeltrainer=ModelTrainer()
-    print(modeltrainer.initiate_model_trainer(train_arr,test_arr))
+    print(modeltrainer.initiate_model_trainer(train_arr,test_arr)) 
+    '''
+    now model is trained on transformed data
+    '''
 

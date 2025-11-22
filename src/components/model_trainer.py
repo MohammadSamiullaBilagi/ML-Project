@@ -19,6 +19,9 @@ from src.logger import logging
 
 from src.utils import save_object,evaluate_models
 
+'''
+Here we are saving the model.pkl file which contains the trained model, this can be used to predict the results in our UI
+'''
 @dataclass
 class ModelTrainerConfig:
     trained_model_file_path=os.path.join("artifacts","model.pkl")
@@ -27,6 +30,14 @@ class ModelTrainer:
     def __init__(self):
         self.model_trainer_config=ModelTrainerConfig()
 
+    '''
+    The initiate_model_trainer() will split the data into train and test
+    models{} is a dictionary of different models to be tested
+    params{} is dictionary of different parameters of each model we will hyperparameter tune
+    so that our model performs well
+
+    This will return r2_score of every model which tells the performance
+    '''
 
     def initiate_model_trainer(self,train_array,test_array):
         try:
@@ -46,6 +57,8 @@ class ModelTrainer:
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False),
                 "AdaBoost Regressor": AdaBoostRegressor(),
             }
+
+            # HyperParameter Tuning
             params={
                 "Decision Tree": {
                     'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],

@@ -1,6 +1,8 @@
 import sys
 from src.logger import logging
 
+# This custom Exception is raised whenved there is an error on any line number, filename
+
 def error_message_details(error,error_detail:sys): #this function will give custom exception message whenever exception is raised
     _,_,exc_tb=error_detail.exc_info() #here i will get all info about exceptions line number, filename, etc
     filename=exc_tb.tb_frame.f_code.co_filename

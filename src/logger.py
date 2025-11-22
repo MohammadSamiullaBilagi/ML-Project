@@ -2,6 +2,8 @@ import logging
 import os
 from datetime import datetime
 
+# This keeps logs of project whenever it is run
+
 LOG_FILE=f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log" #it will give the date time etc
 logs_path=os.path.join(os.getcwd(),"logs") #here all files created in cwd which start with logs and then followed by date time
 os.makedirs(logs_path,exist_ok=True)

@@ -4,6 +4,13 @@ import os
 from src.exception import CustomException
 from src.utils import load_object
 
+'''
+Here we predict for our new data
+
+Two classes :
+    PredictPipeline having predict method which uses the model.pkl file and loads into model
+    then predict the output based on features input from UI
+'''
 
 class PredictPipeline:
     def __init__(self):
@@ -25,6 +32,9 @@ class PredictPipeline:
             raise CustomException(e,sys)
 
 
+'''
+we will define the customdata class for taking in inputs from UI
+'''
 
 class CustomData:
     def __init__(  self,
